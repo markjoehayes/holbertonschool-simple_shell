@@ -26,19 +26,14 @@ char *get_path_value(void)
 void bin(char **cmd)
 {
     int i;
-    char *path = NULL;
-    char *bin = NULL;
+    char *path = NULL, *bin = NULL;
     char **tok = NULL;
-    size_t size;
-    char *path_val = get_path_value();
+    struct stat st;
 
+    char *path_val = get_path_value();
     path = path_val ? strdup(path_val) : strdup(MYPATH);
-    if (!path)
-    {
-        perror("strdup failed");
-        freeArr(cmd);
-        exit(EXIT_FAILURE);
-    }
+	/*fprintf(stderr, "PATH: %s\n", path);*/
+
 
     if ((path_val == NULL || path_val[0] == '\0') &&
         cmd[0][0] != '/' && strncmp(cmd[0], "./", 2) != 0)
@@ -46,57 +41,43 @@ void bin(char **cmd)
         write(STDERR_FILENO, "./hsh: 1: ", 10);
         write(STDERR_FILENO, cmd[0], strlen(cmd[0]));
         write(STDERR_FILENO, ": not found\n", 12);
+
         free(path);
         freeArr(cmd);
         exit(127);
     }
 
-    tok = split(path, ":"); /* Assuming you have a split() for colon*/
-    if (!tok)
-    {
-        free(path);
-        freeArr(cmd);
-        exit(EXIT_FAILURE);
-    }
-
+    tok = split(path, ":");
     for (i = 0; tok[i]; i++)
     {
-        size = strlen(tok[i]) + strlen(cmd[0]) + 2;
-        bin = malloc(size);
+        size_t len = strlen(tok[i]) + strlen(cmd[0]) + 2;
+        bin = malloc(len);
         if (!bin)
         {
             perror("malloc");
-            freeArr(tok);
             free(path);
-            freeArr(cmd);
-            exit(EXIT_FAILURE);
-        }
-
-        snprintf(bin, size, "%s/%s", tok[i], cmd[0]);
-
-        if (access(bin, X_OK) == 0)
-        {
-            free(cmd[0]);
-            cmd[0] = strdup(bin); /* Replace command with full path*/
-            free(bin);
             freeArr(tok);
-            free(path);
             return;
         }
 
+        snprintf(bin, len, "%s/%s", tok[i], cmd[0]);
+        if (stat(bin, &st) == 0)
+        {
+            free(cmd[0]);
+            cmd[0] = strdup(bin);
+			/*fprintf(stderr, "Resolved cmd[0]: %s\n", cmd[0]);*/
+            free(bin);
+            break;
+        }
         free(bin);
         bin = NULL;
     }
 
-    /* If no path worked:*/
-    write(STDERR_FILENO, "./hsh: 1: ", 10);
-    write(STDERR_FILENO, cmd[0], strlen(cmd[0]));
-    write(STDERR_FILENO, ": not found\n", 12);
-
     freeArr(tok);
     free(path);
-    freeArr(cmd);
-    exit(127);
+
+	/*if (!cmd[0] || stat(cmd[0], &st) != 0)
+    fprintf(stderr, "Command not found or invalid path.\n");*/
 }
 
 
@@ -126,6 +107,7 @@ char **split(char *buff, char *limit)
     while (ptr && idx < MAX_TOKENS - 1)
     {
         cmd[idx] = strdup(ptr);
+		ptr[strcspn(ptr, "\n")] = '\0';
         if (!cmd[idx])
         {
             perror("strdup failed");

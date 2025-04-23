@@ -8,6 +8,7 @@ int main(void)
     char *buff = NULL;
     size_t buffsize = 0; /* initialize to 0 so getline allocates */
     char **cmd = NULL;
+	int last_status = 0;
 
     signal(SIGINT, SIG_N);
 
@@ -24,7 +25,7 @@ int main(void)
                 print_env();
             else
 			{
-                if (if_fun(cmd) == -1) /*user typed exit*/
+                if (if_fun(cmd, &last_status) == -1) /*user typed exit*/
 				{
 					freeArr(cmd);
 					break;
@@ -39,6 +40,6 @@ int main(void)
             printf("$ ");
     }
 	free(buff);
-    return (0);
+    return (last_status);
 }
 

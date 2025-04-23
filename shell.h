@@ -27,8 +27,8 @@ char **split_line(char *line, char *limit);
 void SIG_N(int signal);
 void bin(char **cmd);
 void print_env(void);
-void execmd(char **cmd);
-int if_fun(char **cmd);
+int execmd(char **cmd);
+int if_fun(char **cmd, int *last_status);
 void freeArr(char **parsedStr);
 char *get_path_value(void);
 

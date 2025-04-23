@@ -3,28 +3,39 @@
  * execmd - function that executes the command stored in cmd[]
  * @cmd: the commande
  */
-void execmd(char **cmd)
+
+int execmd(char **cmd)
 {
+    pid_t pid;
+    int status;
 
-	int val;
-	int status = 0;
-	pid_t pid = 0;
+    pid = fork();
+	/*printf("fork returned: %d\n", pid);*/ 
+	fflush(stdout);
+    if (pid == 0)
+    {
+		/*printf("cmd[0] before exec: %s\n", cmd[0]);*/
 
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("fork");
-	}
-	if (pid == 0)
-	{
+		/*printf("Child: running [%s]\n", cmd[0]);  DEBUG*/
+    	fflush(stdout); /* force flush*/
+        if (execve(cmd[0], cmd, environ) == -1)
+        {
+            perror("execve failed");
+            exit(127);
+        }
+    }
+    else if (pid < 0)
+    {
+        perror("fork failed");
+        return 1;
+    }
+    else
+    {
+        waitpid(pid, &status, 0);
+        if (WIFEXITED(status))
+            return WEXITSTATUS(status);
+    }
 
-		val = execve(cmd[0], cmd, environ);
-		if (val == -1)
-			perror("Error:555");
-	}
-	if (pid > 0)
-	{
-		waitpid(pid, &status, 0);
-		kill(pid, SIGTERM);
-	}
+    return 0;
 }
+
