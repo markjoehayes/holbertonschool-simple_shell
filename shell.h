@@ -14,7 +14,6 @@ extern char **environ;
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
-extern char **environ;
 #define RL_BUFF_SIZE 1024
 #define TK_BUFF_SIZE 64
 #define TOK_DELIM " \t\r\n\a"
@@ -31,5 +30,6 @@ void print_env(void);
 void execmd(char **cmd);
 void if_fun(char **cmd);
 void freeArr(char **parsedStr);
+char *get_path_value(void);
 
 #endif
