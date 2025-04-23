@@ -36,7 +36,10 @@ void bin(char **cmd)
 	if ((path_val == NULL || path_val[0] == '\0') &&
     	cmd[0][0] != '/' && strncmp(cmd[0], "./", 2) != 0)
 	{
-    	dprintf(STDERR_FILENO, "./hsh: 1: %s: not found\n", cmd[0]);
+		write(STDERR_FILENO, "./hsh: 1: ", 10);
+		write(STDERR_FILENO, cmd[0], strlen(cmd[0]));
+		write(STDERR_FILENO, ": not found\n", 12);
+
     	free(path);
     	freeArr(cmd);
     	exit(127);
@@ -110,6 +113,7 @@ char **split(char *buff, char *limit)
         ptr = strtok(NULL, limit);
         idx++;
     }
+
 
     cmd[idx] = NULL;
     return cmd;
