@@ -1,6 +1,7 @@
 #ifndef _SHELL_H_
 #define _SHELL_H_
 
+#define MAX_TOKENS 100
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
