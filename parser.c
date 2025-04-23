@@ -22,6 +22,7 @@ char *get_path_value(void)
  * bin- search for the command in environment "PATH"
  * @cmd: the commande
  */
+
 void bin(char **cmd)
 {
     int i;
@@ -29,57 +30,76 @@ void bin(char **cmd)
     char *bin = NULL;
     char **tok = NULL;
     size_t size;
+    char *path_val = get_path_value();
 
-	char *path_val = get_path_value();
-	path = path_val ? strdup(path_val) : strdup(MYPATH);
-
-	if ((path_val == NULL || path_val[0] == '\0') &&
-    	cmd[0][0] != '/' && strncmp(cmd[0], "./", 2) != 0)
-	{
-		write(STDERR_FILENO, "./hsh: 1: ", 10);
-		write(STDERR_FILENO, cmd[0], strlen(cmd[0]));
-		write(STDERR_FILENO, ": not found\n", 12);
-
-    	free(path);
-    	freeArr(cmd);
-    	exit(127);
-	}	
-
-
-
-    if (cmd[0][0] != '/' && strncmp(cmd[0], "./", 2) != 0)
+    path = path_val ? strdup(path_val) : strdup(MYPATH);
+    if (!path)
     {
-        tok = split(path, ":");
-        free(path);
-        path = NULL;
+        perror("strdup failed");
+        freeArr(cmd);
+        exit(EXIT_FAILURE);
+    }
 
-        for (i = 0; tok[i]; i++)
+    if ((path_val == NULL || path_val[0] == '\0') &&
+        cmd[0][0] != '/' && strncmp(cmd[0], "./", 2) != 0)
+    {
+        write(STDERR_FILENO, "./hsh: 1: ", 10);
+        write(STDERR_FILENO, cmd[0], strlen(cmd[0]));
+        write(STDERR_FILENO, ": not found\n", 12);
+        free(path);
+        freeArr(cmd);
+        exit(127);
+    }
+
+    tok = split(path, ":"); /* Assuming you have a split() for colon*/
+    if (!tok)
+    {
+        free(path);
+        freeArr(cmd);
+        exit(EXIT_FAILURE);
+    }
+
+    for (i = 0; tok[i]; i++)
+    {
+        size = strlen(tok[i]) + strlen(cmd[0]) + 2;
+        bin = malloc(size);
+        if (!bin)
         {
-            size = strlen(tok[i]) + 1 + strlen(cmd[0]) + 1;
-            bin = malloc(size);
-            if (bin == NULL)
-                break;
-            bin[0] = '\0';  /* Make sure strcat starts clean*/
-            strcat(bin, tok[i]);
-            strcat(bin, "/");
-            strcat(bin, cmd[0]);
-
-            if (access(bin, F_OK) == 0)
-                break;
-
-            free(bin);
-            bin = NULL;
+            perror("malloc");
+            freeArr(tok);
+            free(path);
+            freeArr(cmd);
+            exit(EXIT_FAILURE);
         }
-        freeArr(tok);
-        free(cmd[0]);
-        cmd[0] = bin;
+
+        snprintf(bin, size, "%s/%s", tok[i], cmd[0]);
+
+        if (access(bin, X_OK) == 0)
+        {
+            free(cmd[0]);
+            cmd[0] = strdup(bin); /* Replace command with full path*/
+            free(bin);
+            freeArr(tok);
+            free(path);
+            return;
+        }
+
+        free(bin);
+        bin = NULL;
     }
-    else
-    {
-        free(path);
-        path = NULL;
-    }
+
+    /* If no path worked:*/
+    write(STDERR_FILENO, "./hsh: 1: ", 10);
+    write(STDERR_FILENO, cmd[0], strlen(cmd[0]));
+    write(STDERR_FILENO, ": not found\n", 12);
+
+    freeArr(tok);
+    free(path);
+    freeArr(cmd);
+    exit(127);
 }
+
+
 
 /**
  * split - function taht split the input in an array of string
