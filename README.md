@@ -67,8 +67,8 @@ $ exit
 ## File Structure
 
 - `main.c` - Main shell implementation
-- `builtins.c` - Built-in command handlers
-- `helpers.c` - Helper functions (PATH resolution, etc.)
+- `parser.c` - PATH Resolution and command parsers
+  `execmd.c` - command execution
 - `shell.h` - Header file with function prototypes
 - `README.md` - This documentation file
 - `AUTHORS` - List of contributors
@@ -93,6 +93,6 @@ No known bugs at this time. Please report any issues found.
 ## Authors
 
 - Mark Hayes(https://github.com/markjoehayes)
-- Fernando Colon(https://github.com/...)
+- Fernando Colon(https://github.com/Un4givenlight)
 
 
