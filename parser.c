@@ -1,5 +1,23 @@
 #include "shell.h"
 
+
+char *get_path_value(void)
+{
+    int i = 0;
+    char *key = "PATH=";
+    size_t len = strlen(key);
+
+    while (environ[i])
+    {
+        if (strncmp(environ[i], key, len) == 0)
+            return environ[i] + len; /* return value after "PATH="*/
+        i++;
+    }
+    return NULL;
+}
+
+
+
 /**
  * bin- search for the command in environment "PATH"
  * @cmd: the commande
@@ -12,9 +30,10 @@ void bin(char **cmd)
     char **tok = NULL;
     size_t size;
 
-    path = strdup(getenv("PATH"));
-    if (path == NULL)
-        path = strdup(MYPATH);
+	char *path_val = get_path_value();
+	path = path_val ? strdup(path_val) : strdup(MYPATH);
+
+
 
     if (cmd[0][0] != '/' && strncmp(cmd[0], "./", 2) != 0)
     {
