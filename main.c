@@ -23,7 +23,13 @@ int main(void)
             if (strcmp(cmd[0], "env") == 0)
                 print_env();
             else
-                if_fun(cmd);
+			{
+                if (if_fun(cmd) == -1) /*user typed exit*/
+				{
+					freeArr(cmd);
+					break;
+				}
+			}
         }
 
         freeArr(cmd);
@@ -32,8 +38,7 @@ int main(void)
         if (isatty(STDIN_FILENO))
             printf("$ ");
     }
-
-    free(buff);
+	free(buff);
     return (0);
 }
 

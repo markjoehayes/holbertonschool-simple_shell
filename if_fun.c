@@ -3,17 +3,17 @@
  * if_fun - function that tests execution of a different command in cmd[]
  * @cmd: the commande
  */
-void if_fun(char **cmd)
+int if_fun(char **cmd)
 {
 	struct stat status;
 
 	if (cmd == NULL)
 	{
-		exit(EXIT_SUCCESS);
+		return (0);
 	}
 	if (strcmp(cmd[0], "exit") == 0)
 	{
-		exit(0);
+		return (-1);
 	}
 	if (stat(cmd[0], &status) != 0)
 		bin(cmd); /** get the path*/
@@ -21,4 +21,5 @@ void if_fun(char **cmd)
 		printf("Command not found\n");
 	else
 		execmd(cmd);
+	return (0);	
 }

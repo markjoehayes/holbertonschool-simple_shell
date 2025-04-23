@@ -28,7 +28,7 @@ void SIG_N(int signal);
 void bin(char **cmd);
 void print_env(void);
 void execmd(char **cmd);
-void if_fun(char **cmd);
+int if_fun(char **cmd);
 void freeArr(char **parsedStr);
 char *get_path_value(void);
 
