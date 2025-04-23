@@ -1,7 +1,7 @@
 #include "shell.h"
 /**
  * main - shell looping
- * Return: 0 for success 
+ * Return:  last status 
  */
 int main(void)
 {
