@@ -143,14 +143,14 @@ void print_env(void)
 void freeArr(char **array)
 {
 	int i;
-
+	
+	if (!array)
+		return;
 	for (i = 0; array[i]; i++)
 	{
 		free(array[i]);
-		array[i] = NULL;
 	}
 	free(array);
-	array = NULL;
 }
 /**
  * SIG_N - function signal handler
