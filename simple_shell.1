@@ -1,0 +1,83 @@
+.TH SIMPLE_SHELL 1 "2024-04-24" "simple_shell 1.0" "User Commands"
+.SH NAME
+simple_shell \- a minimal UNIX command interpreter
+.SH SYNOPSIS
+.B ./hsh
+[\fIFILE\fR]
+.SH DESCRIPTION
+.B simple_shell
+is a minimal implementation of a UNIX command line interpreter. It reads commands from either standard input or from a file and executes them in a child process.
+.PP
+The shell supports basic command execution, environment variable handling, and simple built-in commands.
+.SH COMMAND EXECUTION
+When invoked interactively, the shell displays a prompt
+.RB ( "$ " )
+and waits for user input. Commands are executed by forking a child process which executes the requested program.
+.PP
+The shell searches for executables in the directories listed in the
+.B PATH
+environment variable.
+.SH BUILT-IN COMMANDS
+The shell implements the following built-in commands:
+.TP
+.B exit
+[\fIstatus\fR]
+Exit the shell with the specified status (default: 0).
+.TP
+.B env
+Print the current environment variables.
+.TP
+.B setenv
+[\fIvariable\fR] [\fIvalue\fR]
+Set or add an environment variable.
+.TP
+.B unsetenv
+[\fIvariable\fR]
+Remove an environment variable.
+.TP
+.B cd
+[\fIdirectory\fR]
+Change the current working directory. With no arguments, changes to the home directory.
+.SH EXAMPLES
+Interactive mode:
+.RS
+.PP
+.nf
+.RS
+$\fB ./hsh\fR
+$\fB ls \-l\fR
+$\fB exit\fR
+.RE
+.fi
+.RE
+.PP
+Non-interactive mode:
+.RS
+.PP
+.nf
+.RS
+$\fB echo "ls \-l" | ./hsh\fR
+$\fB ./hsh script_file\fR
+.RE
+.fi
+.RE
+.SH ENVIRONMENT
+.TP
+.B PATH
+The search path for command execution.
+.TP
+.B HOME
+The home directory for the cd command.
+.SH AUTHORS
+Written by
+.B Mark Hayes
+and
+.B Fernando Colon
+as part of the Holberton School curriculum.
+.SH REPORTING BUGS
+Report bugs to the project repository at:
+.br
+<\fIhttps://github.com/markjoehayes/holbertonschool-simple_shell\fR>
+.SH SEE ALSO
+.BR sh (1),
+.BR bash (1)
