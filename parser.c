@@ -33,6 +33,15 @@ void bin(char **cmd)
 	char *path_val = get_path_value();
 	path = path_val ? strdup(path_val) : strdup(MYPATH);
 
+	if ((path_val == NULL || path_val[0] == '\0') &&
+    	cmd[0][0] != '/' && strncmp(cmd[0], "./", 2) != 0)
+	{
+    	dprintf(STDERR_FILENO, "./hsh: 1: %s: not found\n", cmd[0]);
+    	free(path);
+    	freeArr(cmd);
+    	exit(127);
+	}	
+
 
 
     if (cmd[0][0] != '/' && strncmp(cmd[0], "./", 2) != 0)
