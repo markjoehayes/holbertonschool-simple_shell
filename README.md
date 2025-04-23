@@ -68,7 +68,7 @@ $ exit
 
 - `main.c` - Main shell implementation
 - `parser.c` - PATH Resolution and command parsers
-  `execmd.c` - command execution
+- `execmd.c` - command execution
 - `shell.h` - Header file with function prototypes
 - `README.md` - This documentation file
 - `AUTHORS` - List of contributors
