@@ -33,12 +33,15 @@ int main(void)
  				if_fun(cmd);
     	}
 
-    freeArr(cmd);
+    	freeArr(cmd);
+		cmd = NULL;
 
-    /* Reprint prompt in interactive mode */
-    if (isatty(STDIN_FILENO))
-        printf("$ ");
+    	/* Reprint prompt in interactive mode */
+    	if (isatty(STDIN_FILENO))
+        	printf("$ ");
 	}
+	if (cmd)
+		freeArr(cmd);
 	
 	free(buff);
 	exit(EXIT_SUCCESS);
